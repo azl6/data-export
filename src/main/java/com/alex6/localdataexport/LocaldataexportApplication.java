@@ -1,7 +1,9 @@
 package com.alex6.localdataexport;
 
 import com.alex6.localdataexport.domain.ViewCorpoTecnico;
+import com.alex6.localdataexport.exporter.ExportadorXLSXStrategy;
 import com.alex6.localdataexport.repository.ViewCorpoTecnicoRepository;
+import com.alex6.localdataexport.service.ViewCorpoTecnicoService;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -48,5 +50,6 @@ public class LocaldataexportApplication implements CommandLineRunner {
 				.build());
 
 		viewCorpoTecnicoRepository.saveAll(corpoTecnicoList);
+
 	}
 }

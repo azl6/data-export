@@ -2,6 +2,7 @@ package com.alex6.localdataexport.exporter;
 
 import com.alex6.localdataexport.domain.ViewCorpoTecnico;
 
+import java.io.File;
 import java.util.List;
 
 public class ExportadorODSStrategy implements ExportadorStrategy{
