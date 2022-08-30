@@ -49,6 +49,17 @@ public class LocaldataexportApplication implements CommandLineRunner {
 				.extra("EXTRA")
 				.build());
 
+		corpoTecnicoList.add(ViewCorpoTecnico.builder()
+				.nomeFuncionario("Marcelo")
+				.ano("2022")
+				.sgEntidadeNacional("SESI")
+				.sgEntidadeRegional("SESI-SP")
+				.titulo("TITULO")
+				.nota("NOTA")
+				.fonte("FONTE")
+				.extra("EXTRA")
+				.build());
+
 		viewCorpoTecnicoRepository.saveAll(corpoTecnicoList);
 
 	}

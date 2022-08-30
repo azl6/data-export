@@ -30,10 +30,10 @@ public class ViewCorpoTecnicoController {
 
     @GetMapping(value = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public void export(@RequestParam Integer ano,
-                                           @RequestParam String entidade,
-                                           @RequestParam String departamento,
-                                           @RequestParam(required = false) TipoExportacaoEnum tipoExportacao,
-                                           HttpServletResponse response){
+                       @RequestParam String entidade,
+                       @RequestParam String departamento,
+                       @RequestParam(required = false) TipoExportacaoEnum tipoExportacao,
+                       HttpServletResponse response){
 
         List<ViewCorpoTecnico> corpoTecnicoList = viewCorpoTecnicoService
                                                     .findAllByAnoEntidadeDepartamento(ano, entidade, departamento);
