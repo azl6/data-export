@@ -1,5 +1,7 @@
 package com.alex6.localdataexport.controller;
 
+import com.alex6.localdataexport.controller.exceptions.ByteTransferErrorException;
+import com.alex6.localdataexport.controller.exceptions.ObjectNotFoundException;
 import com.alex6.localdataexport.domain.ViewCorpoTecnico;
 import com.alex6.localdataexport.enums.TipoExportacaoEnum;
 import com.alex6.localdataexport.service.ViewCorpoTecnicoService;
@@ -33,7 +35,7 @@ public class ViewCorpoTecnicoController {
                        @RequestParam String entidade,
                        @RequestParam String departamento,
                        @RequestParam(required = false) TipoExportacaoEnum tipoExportacao,
-                       HttpServletResponse response){
+                       HttpServletResponse response) throws ObjectNotFoundException, ByteTransferErrorException {
 
         List<ViewCorpoTecnico> corpoTecnicoList = viewCorpoTecnicoService
                                                     .findAllByAnoEntidadeDepartamento(ano, entidade, departamento);
@@ -48,7 +50,7 @@ public class ViewCorpoTecnicoController {
                                                        @RequestParam String departamento,
                                                        @RequestParam(required = false, defaultValue = "0") Integer page,
                                                        @RequestParam(required = false, defaultValue = "15") Integer size,
-                                                       @RequestParam(required = false, defaultValue = "NOME_FUNCIONARIO") String sortBy){
+                                                       @RequestParam(required = false, defaultValue = "NOME_FUNCIONARIO") String sortBy) throws ObjectNotFoundException {
 
         Page<ViewCorpoTecnico> corpoTecnicoPage = viewCorpoTecnicoService
                 .findAllByAnoEntidadeDepartamento(ano, entidade, departamento, PageRequest.of(page, size, Sort.by(sortBy)));

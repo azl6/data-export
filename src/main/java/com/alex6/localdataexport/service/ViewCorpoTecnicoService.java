@@ -1,5 +1,7 @@
 package com.alex6.localdataexport.service;
 
+import com.alex6.localdataexport.controller.exceptions.ByteTransferErrorException;
+import com.alex6.localdataexport.controller.exceptions.ObjectNotFoundException;
 import com.alex6.localdataexport.domain.ViewCorpoTecnico;
 import com.alex6.localdataexport.enums.TipoExportacaoEnum;
 import com.alex6.localdataexport.exporter.ExportadorODSStrategy;
@@ -19,15 +21,25 @@ public class ViewCorpoTecnicoService {
 
     private ViewCorpoTecnicoRepository viewCorpoTecnicoRepository;
 
-    public List<ViewCorpoTecnico> findAllByAnoEntidadeDepartamento(Integer ano, String sgEntidade, String sgDepartamento){
-        return viewCorpoTecnicoRepository.findAllByAnoEntidadeDepartamento(ano, sgEntidade, sgDepartamento);
+    public List<ViewCorpoTecnico> findAllByAnoEntidadeDepartamento(Integer ano, String sgEntidade, String sgDepartamento) throws ObjectNotFoundException {
+        var corpoTecnicoList = viewCorpoTecnicoRepository.findAllByAnoEntidadeDepartamento(ano, sgEntidade, sgDepartamento);
+
+        if(corpoTecnicoList.isEmpty())
+            throw new ObjectNotFoundException("Não foram encontrados colaboradores para os parâmetros informados.");
+
+        return corpoTecnicoList;
     }
 
-    public Page<ViewCorpoTecnico> findAllByAnoEntidadeDepartamento(Integer ano, String sgEntidade, String sgDepartamento, Pageable pageable) {
-        return viewCorpoTecnicoRepository.findAllByAnoEntidadeDepartamento(ano, sgEntidade, sgDepartamento, pageable);
+    public Page<ViewCorpoTecnico> findAllByAnoEntidadeDepartamento(Integer ano, String sgEntidade, String sgDepartamento, Pageable pageable) throws ObjectNotFoundException {
+        var corpoTecnicoList = viewCorpoTecnicoRepository.findAllByAnoEntidadeDepartamento(ano, sgEntidade, sgDepartamento, pageable);
+
+        if(corpoTecnicoList.isEmpty())
+            throw new ObjectNotFoundException("Não foram encontrados colaboradores para os parâmetros informados.");
+
+        return corpoTecnicoList;
     }
 
-    public void export(List<ViewCorpoTecnico> corpoTecnicoList, TipoExportacaoEnum tipoExportacao, HttpServletResponse response) {
+    public void export(List<ViewCorpoTecnico> corpoTecnicoList, TipoExportacaoEnum tipoExportacao, HttpServletResponse response) throws ByteTransferErrorException {
 
         var opcoesExport = List.of(new ExportadorODSStrategy(), new ExportadorXLSXStrategy());
 

@@ -1,5 +1,6 @@
 package com.alex6.localdataexport.exporter;
 
+import com.alex6.localdataexport.controller.exceptions.ByteTransferErrorException;
 import com.alex6.localdataexport.domain.ViewCorpoTecnico;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -15,7 +16,7 @@ import java.util.List;
 public class ExportadorXLSXStrategy implements ExportadorStrategy{
 
     @Override
-    public void export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName, HttpServletResponse response) {
+    public void export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName, HttpServletResponse response) throws ByteTransferErrorException {
         log.info("Exportará XLSX...");
 
         Workbook workbook = new XSSFWorkbook();
@@ -33,7 +34,7 @@ public class ExportadorXLSXStrategy implements ExportadorStrategy{
         createFirstRow(workbook, sheet, sgEntidade);
         createDataDeEmissaoRow(workbook, sheet); //TODO
         createDataDePublicacaoRow(workbook, sheet);
-        createTituloRow(workbook, sheet, ano);
+        createTituloRow(workbook, sheet, ano); //TODO
         createDepartamentoRegionalRow(workbook, sheet, sgDepartamento);
         createHeaderRow(workbook, sheet, headers);
 
@@ -60,11 +61,12 @@ public class ExportadorXLSXStrategy implements ExportadorStrategy{
         response.setContentType("application/octet-stream");
     }
 
-    private void download(HttpServletResponse response, Workbook workbook){
+    private void download(HttpServletResponse response, Workbook workbook) throws ByteTransferErrorException {
         try (ServletOutputStream outputStream = response.getOutputStream()) {
             workbook.write(outputStream);
         } catch (IOException e) {
             e.printStackTrace();
+            throw new ByteTransferErrorException("Houve um erro ao baixar o arquivo.");
         }
     }
 

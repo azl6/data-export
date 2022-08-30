@@ -1,5 +1,6 @@
 package com.alex6.localdataexport.exporter;
 
+import com.alex6.localdataexport.controller.exceptions.ByteTransferErrorException;
 import com.alex6.localdataexport.domain.ViewCorpoTecnico;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +25,16 @@ public class ExportadorODSStrategy implements ExportadorStrategy{
     private int[] tamanhoColunas = {80, 25 , 25};
 
     @Override
-    public void export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName, HttpServletResponse response){
+    public void export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName, HttpServletResponse response) throws ByteTransferErrorException {
         log.info("Exportará ODS...");
 
-        Integer listSize = corpoTecnicoList.size();
-        Integer fonteIndex = listSize + 8;
-        Integer notaIndex = listSize + 9;
+        final Integer LIST_SIZE = corpoTecnicoList.size();
+        final Integer FONTE_INDEX = LIST_SIZE + 8;
+        final Integer NOTA_INDEX = LIST_SIZE + 9;
+        final Integer TABLE_HEIGHT = LIST_SIZE + 10;
+        final Integer TABLE_WIDTH = 3;
 
-        final Object[][] data = new Object[listSize][3];
+        final Object[][] data = new Object[TABLE_HEIGHT][TABLE_WIDTH];
 
         String titulo = corpoTecnicoList.get(0).getTitulo();
         String nota = corpoTecnicoList.get(0).getNota();
@@ -47,8 +50,8 @@ public class ExportadorODSStrategy implements ExportadorStrategy{
         data[4] = createDepartamentoRegionalRow(sgDepartamento);
         data[6] = createHeaderRow(headers);
         createCorposTecnicosRows(data, corpoTecnicoList);
-        data[fonteIndex] = createFonteRow(fonte);
-        data[notaIndex] = createNotaRow(nota);
+        data[FONTE_INDEX] = createFonteRow(fonte);
+        data[NOTA_INDEX] = createNotaRow(nota);
 
         String[] columns = new String[] { "Transparência " + sgEntidade, "", "" };
 
@@ -110,7 +113,7 @@ public class ExportadorODSStrategy implements ExportadorStrategy{
         }
     }
 
-    private void download(SpreadSheet spreadSheet, HttpServletResponse response) {
+    private void download(SpreadSheet spreadSheet, HttpServletResponse response) throws ByteTransferErrorException {
         byte[] dataFile = getBytesDataFile(spreadSheet);
         setResponseProperties(response);
 
@@ -118,6 +121,7 @@ public class ExportadorODSStrategy implements ExportadorStrategy{
             outputStream.write(dataFile, 0, dataFile.length);
         } catch (IOException e) {
             e.printStackTrace();
+            throw new ByteTransferErrorException("Houve um erro ao baixar o arquivo.");
         }
     }
 
