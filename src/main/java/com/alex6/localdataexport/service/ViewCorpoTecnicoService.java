@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Service
@@ -26,7 +27,7 @@ public class ViewCorpoTecnicoService {
         return viewCorpoTecnicoRepository.findAllByAnoEntidadeDepartamento(ano, sgEntidade, sgDepartamento, pageable);
     }
 
-    public byte[] export(List<ViewCorpoTecnico> corpoTecnicoList, TipoExportacaoEnum tipoExportacao) {
+    public void export(List<ViewCorpoTecnico> corpoTecnicoList, TipoExportacaoEnum tipoExportacao, HttpServletResponse response) {
 
         var opcoesExport = List.of(new ExportadorODSStrategy(), new ExportadorXLSXStrategy());
 
@@ -34,6 +35,6 @@ public class ViewCorpoTecnicoService {
 
         var exportador = opcoesExport.get(tipoExportacao.getCode()-1);
 
-        return exportador.export(corpoTecnicoList, headers, "export.xlsx");
+        exportador.export(corpoTecnicoList, headers, "export.xlsx", response);
     }
 }

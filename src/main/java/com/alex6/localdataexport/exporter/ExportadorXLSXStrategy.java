@@ -4,6 +4,8 @@ import com.alex6.localdataexport.domain.ViewCorpoTecnico;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.List;
 public class ExportadorXLSXStrategy implements ExportadorStrategy{
 
     @Override
-    public byte[] export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName) {
+    public void export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName, HttpServletResponse response) {
         System.out.println("Exportará XLSX...");
 
         Workbook workbook = new XSSFWorkbook();
@@ -47,21 +49,21 @@ public class ExportadorXLSXStrategy implements ExportadorStrategy{
         sheet.autoSizeColumn(1);
         sheet.autoSizeColumn(2);
 
-        try (OutputStream outputStream = new FileOutputStream(fileName)) {
-            workbook.write(outputStream);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            baos.writeTo(outputStream);
-            return baos.toByteArray();
+        setResponseProperties(response);
+        download(response, workbook);
+    }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    private void setResponseProperties(HttpServletResponse response) {
+        response.setHeader("Content-Disposition", "attachment;filename=export.xlsx");
+        response.setContentType("application/octet-stream");
+    }
+
+    private void download(HttpServletResponse response, Workbook workbook){
+        try (ServletOutputStream outputStream = response.getOutputStream()) {
+            workbook.write(outputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
-        return new byte[1024];
     }
 
     private void createFirstRow(Workbook workbook, Sheet sheet, String entidade){

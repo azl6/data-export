@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.servlet.http.HttpServletResponse;
 import java.awt.print.Pageable;
 import java.util.List;
 
@@ -28,24 +29,16 @@ public class ViewCorpoTecnicoController {
     ViewCorpoTecnicoService viewCorpoTecnicoService;
 
     @GetMapping(value = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> export(@RequestParam Integer ano,
+    public void export(@RequestParam Integer ano,
                                            @RequestParam String entidade,
                                            @RequestParam String departamento,
-                                           @RequestParam(required = false) TipoExportacaoEnum tipoExportacao){
+                                           @RequestParam(required = false) TipoExportacaoEnum tipoExportacao,
+                                           HttpServletResponse response){
 
         List<ViewCorpoTecnico> corpoTecnicoList = viewCorpoTecnicoService
                                                     .findAllByAnoEntidadeDepartamento(ano, entidade, departamento);
 
-        ByteArrayResource resource = new ByteArrayResource(viewCorpoTecnicoService.export(corpoTecnicoList, tipoExportacao));
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        ContentDisposition.attachment()
-                                .filename("export.xlsx")
-                                .build().toString())
-                .body(resource);
-
+        viewCorpoTecnicoService.export(corpoTecnicoList, tipoExportacao, response);
 
     }
 
