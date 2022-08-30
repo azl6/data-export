@@ -3,16 +3,18 @@ package com.alex6.localdataexport.controller;
 import com.alex6.localdataexport.domain.ViewCorpoTecnico;
 import com.alex6.localdataexport.enums.TipoExportacaoEnum;
 import com.alex6.localdataexport.service.ViewCorpoTecnicoService;
+import jdk.jfr.ContentType;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.awt.print.Pageable;
@@ -25,16 +27,25 @@ public class ViewCorpoTecnicoController {
 
     ViewCorpoTecnicoService viewCorpoTecnicoService;
 
-    @GetMapping("/export")
-    public void export(@RequestParam Integer ano,
-                       @RequestParam String entidade,
-                       @RequestParam String departamento,
-                       @RequestParam(required = false) TipoExportacaoEnum tipoExportacao){
+    @GetMapping(value = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<Resource> export(@RequestParam Integer ano,
+                                           @RequestParam String entidade,
+                                           @RequestParam String departamento,
+                                           @RequestParam(required = false) TipoExportacaoEnum tipoExportacao){
 
         List<ViewCorpoTecnico> corpoTecnicoList = viewCorpoTecnicoService
                                                     .findAllByAnoEntidadeDepartamento(ano, entidade, departamento);
 
-        viewCorpoTecnicoService.export(corpoTecnicoList, tipoExportacao);
+        ByteArrayResource resource = new ByteArrayResource(viewCorpoTecnicoService.export(corpoTecnicoList, tipoExportacao));
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment()
+                                .filename("export.xlsx")
+                                .build().toString())
+                .body(resource);
+
 
     }
 

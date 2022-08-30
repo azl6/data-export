@@ -7,7 +7,8 @@ import java.util.List;
 
 public class ExportadorODSStrategy implements ExportadorStrategy{
     @Override
-    public void export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName) {
+    public byte[] export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName) {
         System.out.println("Exportará ODS...");
+        return null;
     }
 }

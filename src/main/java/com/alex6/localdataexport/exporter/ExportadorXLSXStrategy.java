@@ -11,7 +11,7 @@ import java.util.List;
 public class ExportadorXLSXStrategy implements ExportadorStrategy{
 
     @Override
-    public void export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName) {
+    public byte[] export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName) {
         System.out.println("Exportará XLSX...");
 
         Workbook workbook = new XSSFWorkbook();
@@ -49,11 +49,19 @@ public class ExportadorXLSXStrategy implements ExportadorStrategy{
 
         try (OutputStream outputStream = new FileOutputStream(fileName)) {
             workbook.write(outputStream);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.writeTo(outputStream);
+            return baos.toByteArray();
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+
+        return new byte[1024];
     }
 
     private void createFirstRow(Workbook workbook, Sheet sheet, String entidade){

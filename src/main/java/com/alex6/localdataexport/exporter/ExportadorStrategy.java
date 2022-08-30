@@ -5,5 +5,5 @@ import com.alex6.localdataexport.domain.ViewCorpoTecnico;
 import java.util.List;
 
 public interface ExportadorStrategy {
-    public void export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName);
+    public byte[] export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName);
 }

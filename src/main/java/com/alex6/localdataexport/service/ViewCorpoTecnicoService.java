@@ -26,7 +26,7 @@ public class ViewCorpoTecnicoService {
         return viewCorpoTecnicoRepository.findAllByAnoEntidadeDepartamento(ano, sgEntidade, sgDepartamento, pageable);
     }
 
-    public void export(List<ViewCorpoTecnico> corpoTecnicoList, TipoExportacaoEnum tipoExportacao) {
+    public byte[] export(List<ViewCorpoTecnico> corpoTecnicoList, TipoExportacaoEnum tipoExportacao) {
 
         var opcoesExport = List.of(new ExportadorODSStrategy(), new ExportadorXLSXStrategy());
 
@@ -34,6 +34,6 @@ public class ViewCorpoTecnicoService {
 
         var exportador = opcoesExport.get(tipoExportacao.getCode()-1);
 
-        exportador.export(corpoTecnicoList, headers, "export.xlsx");
+        return exportador.export(corpoTecnicoList, headers, "export.xlsx");
     }
 }
