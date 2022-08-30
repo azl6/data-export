@@ -2,6 +2,7 @@ package com.alex6.localdataexport.exporter;
 
 import com.alex6.localdataexport.domain.ViewCorpoTecnico;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jopendocument.dom.spreadsheet.MutableCell;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
@@ -17,13 +18,20 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+@Slf4j
 public class ExportadorODSStrategy implements ExportadorStrategy{
 
     private int[] tamanhoColunas = {80, 25 , 25};
 
     @Override
     public void export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName, HttpServletResponse response){
-        System.out.println("Exportará ODS...");
+        log.info("Exportará ODS...");
+
+        Integer listSize = corpoTecnicoList.size();
+        Integer fonteIndex = listSize + 8;
+        Integer notaIndex = listSize + 9;
+
+        final Object[][] data = new Object[listSize][3];
 
         String titulo = corpoTecnicoList.get(0).getTitulo();
         String nota = corpoTecnicoList.get(0).getNota();
@@ -33,22 +41,18 @@ public class ExportadorODSStrategy implements ExportadorStrategy{
         String sgDepartamento = corpoTecnicoList.get(0).getSgEntidadeRegional();
         String ano = corpoTecnicoList.get(0).getAno();
 
-        final Object[][] data = new Object[100][3];
         data[0] = createDataDeEmissaoRow();
         data[1] = createDataDePublicacaoRow();
         data[3] = createTituloRow(ano);
         data[4] = createDepartamentoRegionalRow(sgDepartamento);
         data[6] = createHeaderRow(headers);
         createCorposTecnicosRows(data, corpoTecnicoList);
-        data[corpoTecnicoList.size() + 8] = createFonteRow(fonte);
-        data[corpoTecnicoList.size() + 9] = createNotaRow(nota);
-
+        data[fonteIndex] = createFonteRow(fonte);
+        data[notaIndex] = createNotaRow(nota);
 
         String[] columns = new String[] { "Transparência " + sgEntidade, "", "" };
 
         TableModel model = new DefaultTableModel(data, columns);
-
-        final File file = new File("CorpoTecnico.ods");
 
         SpreadSheet spreadSheet = SpreadSheet.createEmpty(model);
         formatSheet(spreadSheet);
@@ -57,7 +61,6 @@ public class ExportadorODSStrategy implements ExportadorStrategy{
     }
 
     private Object[] createDataDeEmissaoRow(){
-
         String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date());
         String[] dateTime = timeStamp.split(" ");
 

@@ -1,6 +1,7 @@
 package com.alex6.localdataexport.exporter;
 
 import com.alex6.localdataexport.domain.ViewCorpoTecnico;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -10,11 +11,12 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+@Slf4j
 public class ExportadorXLSXStrategy implements ExportadorStrategy{
 
     @Override
     public void export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName, HttpServletResponse response) {
-        System.out.println("Exportará XLSX...");
+        log.info("Exportará XLSX...");
 
         Workbook workbook = new XSSFWorkbook();
 
