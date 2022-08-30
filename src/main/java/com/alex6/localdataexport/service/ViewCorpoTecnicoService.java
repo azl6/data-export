@@ -35,6 +35,6 @@ public class ViewCorpoTecnicoService {
 
         var exportador = opcoesExport.get(tipoExportacao.getCode()-1);
 
-        exportador.export(corpoTecnicoList, headers, "export.xlsx", response);
+        exportador.export(corpoTecnicoList, headers, "CorpoTecnico.xlsx", response);
     }
 }

@@ -54,7 +54,7 @@ public class ExportadorXLSXStrategy implements ExportadorStrategy{
     }
 
     private void setResponseProperties(HttpServletResponse response) {
-        response.setHeader("Content-Disposition", "attachment;filename=export.xlsx");
+        response.setHeader("Content-Disposition", "attachment;filename=CorpoTecnico.xlsx");
         response.setContentType("application/octet-stream");
     }
 

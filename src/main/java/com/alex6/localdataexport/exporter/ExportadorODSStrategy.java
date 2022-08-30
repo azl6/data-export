@@ -1,18 +1,26 @@
 package com.alex6.localdataexport.exporter;
 
 import com.alex6.localdataexport.domain.ViewCorpoTecnico;
-import org.apache.poi.ss.usermodel.*;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
+import org.jopendocument.dom.spreadsheet.MutableCell;
+import org.jopendocument.dom.spreadsheet.Sheet;
+import org.jopendocument.dom.spreadsheet.SpreadSheet;
+import org.jopendocument.util.FileUtils;
+
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ExportadorODSStrategy implements ExportadorStrategy{
+
+    private int[] tamanhoColunas = {80, 25 , 25};
+
     @Override
     public void export(List<ViewCorpoTecnico> corpoTecnicoList, String[] headers, String fileName, HttpServletResponse response){
         System.out.println("Exportará ODS...");
@@ -40,13 +48,12 @@ public class ExportadorODSStrategy implements ExportadorStrategy{
 
         TableModel model = new DefaultTableModel(data, columns);
 
-        final File file = new File("temperature.ods");
+        final File file = new File("CorpoTecnico.ods");
 
-        try{
-            SpreadSheet.createEmpty(model).saveAs(file);
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+        SpreadSheet spreadSheet = SpreadSheet.createEmpty(model);
+        formatSheet(spreadSheet);
+        download(spreadSheet, response);
+
     }
 
     private Object[] createDataDeEmissaoRow(){
@@ -89,5 +96,43 @@ public class ExportadorODSStrategy implements ExportadorStrategy{
 
     private Object[] createNotaRow(String nota){
         return new Object[]{nota, "", ""};
+    }
+
+    private void formatSheet(SpreadSheet spreadSheet){
+        Sheet sheet = spreadSheet.getFirstSheet();
+        for(int coluna = 0; coluna < 3; coluna++){
+            MutableCell<SpreadSheet> cell = sheet.getCellAt(0, 7);
+            cell.setBackgroundColor(Color.decode("#c0c0c0"));
+            sheet.getColumn(coluna).setWidth(tamanhoColunas[coluna]);
+        }
+    }
+
+    private void download(SpreadSheet spreadSheet, HttpServletResponse response) {
+        byte[] dataFile = getBytesDataFile(spreadSheet);
+        setResponseProperties(response);
+
+        try (ServletOutputStream outputStream = response.getOutputStream()) {
+            outputStream.write(dataFile, 0, dataFile.length);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setResponseProperties(HttpServletResponse response) {
+        response.setHeader("Content-Disposition", "attachment;filename=CorpoTecnico.ods");
+        response.setContentType("application/octet-stream");
+    }
+
+    private byte[] getBytesDataFile(SpreadSheet spreadSheet){
+        File file = new File("CorpoTecnico.ods");
+        spreadSheet.getFirstSheet().setName("Membros do Corpo Tecnico");
+        try {
+            spreadSheet.saveAs(file);
+            return FileUtils.readBytes(file);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

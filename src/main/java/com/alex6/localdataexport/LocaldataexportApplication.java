@@ -28,7 +28,7 @@ public class LocaldataexportApplication implements CommandLineRunner {
 		List<ViewCorpoTecnico> corpoTecnicoList = new ArrayList<>();
 
 		corpoTecnicoList.add(ViewCorpoTecnico.builder()
-				.nomeFuncionario("Alex")
+				.nomeFuncionario("CÉLIA FERREIRA DE OLIVEIRA")
 				.ano("2022")
 				.sgEntidadeNacional("SESI")
 				.sgEntidadeRegional("SESI-SP")
@@ -39,7 +39,7 @@ public class LocaldataexportApplication implements CommandLineRunner {
 				.build());
 
 		corpoTecnicoList.add(ViewCorpoTecnico.builder()
-				.nomeFuncionario("Bruna")
+				.nomeFuncionario("RENATO ROMIRO RODRIGUES")
 				.ano("2022")
 				.sgEntidadeNacional("SESI")
 				.sgEntidadeRegional("SESI-SP")
@@ -50,7 +50,7 @@ public class LocaldataexportApplication implements CommandLineRunner {
 				.build());
 
 		corpoTecnicoList.add(ViewCorpoTecnico.builder()
-				.nomeFuncionario("Marcelo")
+				.nomeFuncionario("MARCELO PRADO LEITE DA SILVA")
 				.ano("2022")
 				.sgEntidadeNacional("SESI")
 				.sgEntidadeRegional("SESI-SP")
